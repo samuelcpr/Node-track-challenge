@@ -15,12 +15,15 @@ function checksExistsUserAccount(request, response, next) {
     if (!user) {
         return response.status(404).json({ error: "User name already exists" });
     }
+
     request.user = user;
-    return next();
+    return next(); // manda passar
 }
+
+// cadastrar  localhost:3333/users
 app.post("/users", (request, response) => {
     const { username, name } = request.body;
-    const userAlreadyExists = users.find((user) => user.username === username);
+    const userAlreadyExists = users.find(user => user.username === username);
     if (userAlreadyExists) {
         return response.status(400).json({ error: "User already exists" });
     }
@@ -31,7 +34,7 @@ app.post("/users", (request, response) => {
         todos: [],
     };
     users.push(user);
-    return response.status(201).json(user);
+    return response.status(200).json(user);
 });
 
 app.get("/todos", checksExistsUserAccount, (request, response) => {
@@ -75,6 +78,13 @@ app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
     const todo = user.todos.find((todo) => todo.id === id);
     if (!todo) {
         return response.status(404).json({ error: "Todo not found" });
+        /**
+         
+        O status 404 deve ser utilizado para quando um recurso não for encontrado (por
+        exemplo, a URL não existir). No teu exemplo, a URL existe, o que não existe 
+        são os dados.
+        
+        */
     }
     todo.done = true;
     return response.json(todo);
